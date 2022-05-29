@@ -4,7 +4,7 @@ from django.shortcuts import render
 def page_not_found(request, exception):
     return render(
         request,
-        '\Dev\hw05_final\yatube\templates\core\404.html',
+        '/Dev/hw05_final/yatube/templates/core/404.html',
         {'path': request.path},
         status=404,
     )
@@ -13,7 +13,7 @@ def page_not_found(request, exception):
 def server_error(request):
     return render(
         request,
-        '\Dev\hw05_final\yatube\templates\core\500.html',
+        '/Dev/hw05_final/yatube/templates/core/500.html',
         status=500,
     )
 
@@ -21,7 +21,7 @@ def server_error(request):
 def permission_denied(request, exception):
     return render(
         request,
-        '\Dev\hw05_final\yatube\templates\core\403.html',
+        '/Dev/hw05_final/yatube/templates/core/403.html',
         status=403,
     )
 
@@ -29,5 +29,5 @@ def permission_denied(request, exception):
 def csrf_failure(request, reason=''):
     return render(
         request,
-        '\Dev\hw05_final\yatube\templates\core\403csrf.html',
+        '/Dev/hw05_final/yatube/templates/core/403csrf.html',
     )
