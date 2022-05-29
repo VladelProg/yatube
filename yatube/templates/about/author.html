@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+<p>
+  <aside class="col-12 col-md-9">
+    <div style="margin-left:70px;" class="aboutmeconteiner">
+      <div class="infome">
+        <h2 class="title">Об авторе проекта</h2>
+        <h1 style="margin-top:40px;" class="name">Фанис</h1>
+        <P class="aboutme-text0"> Автор проекта - человек простой и общительный, решивший создать сея творение по указу задания из <a href="https://practicum.yandex.ru/"> <b> Яндекс.Практикума</b> </a>. </P>
+        <P class="pet_author-text"> А кому интересно, это Максик: </P>
+        {% load static %}
+        <img style="margin-left:40px;" src="{% static 'img/pet_author.jpg' %}" width="300" height="380" class="d-inline-block align-top" alt="">
+      </div>
+      <div style="margin-top:40px;" class="additionally">
+        <h3 class="name">Дополнительно</h3>
+        <li class="links"> 
+            <a href="https://github.com/FanisGi/"> <b>github</b> </a>
+            <span>.................................<b>[</b> Если есть желание посмотреть другие работы автора <b>]</b> </span>
+        </li>
+        <li class="links"> 
+            <a href="https://github.com/FanisGi/"> <b>Linkidin</b> </a>
+            <span>..............................<b>[</b> Если есть желание нанять на работу автора <b>]</b> </span>
+        </li>
+        <li  class="links">  
+            <a href="mailto:agilazov@inbox.ru"> <b>agilazov@inbox.ru</b> </a>  
+            <span>.......<b>[</b> Если есть желание что-то спросить у автора <b>]</b> </span>
+        </li>
+      </div>
+      <P style="margin-top:80px;" class="aboutme-text1"><b>* Эта страница, как и весь проект в целом будет подвергнут изменениям, как у автора будет больше времени) </b> </P>
+    </div>
+  </aside>
+</p>
+{% endblock %}
