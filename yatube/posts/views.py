@@ -1,8 +1,7 @@
-from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import Follow, Group, Post, Comment, User
+from .models import Follow, Group, Post, User
 from .forms import PostForm, CommentForm
 from .utils import block_paginator
 
@@ -51,12 +50,7 @@ def profile(request, username):
 @login_required
 def follow_index(request):
     """Информация о подписках пользователя"""
-    posts = []
-    user = request.user
-    follows = Follow.objects.filter(user=user)
-    if len(follows) > 0:
-        for follow in follows:
-            posts.extend(Post.objects.filter(author=follow.author))
+    posts = Post.objects.filter(author__following__user=request.user)
     page_obj = block_paginator(posts, request)
     context = {
         'page_obj': page_obj,
@@ -68,11 +62,10 @@ def follow_index(request):
 def profile_follow(request, username):
     """Подписаться на автора"""
     follow_author = get_object_or_404(User, username=username)
-    follow_user = get_object_or_404(User, username=request.user)
-    if follow_user != follow_author:
+    if request.user != follow_author:
         Follow.objects.get_or_create(
             author=follow_author,
-            user=follow_user,
+            user=request.user,
         )
     return redirect('posts:follow_index')
 
@@ -81,12 +74,16 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     """отписаться от автора"""
     follow_author = get_object_or_404(User, username=username)
-    follow_user = get_object_or_404(User, username=request.user)
-    if follow_user != follow_author:
-        Follow.objects.get(
+    follow = Follow.objects.get(
+        author=follow_author,
+        user=request.user,
+    )
+    if request.user != follow_author:
+        if Follow.objects.filter(
             author=follow_author,
-            user=follow_user,
-        ).delete()
+            user=request.user,
+        ).exists():
+            follow.delete()
     return redirect('posts:follow_index')
 
 
@@ -95,8 +92,8 @@ def post_detail(request, post_id):
     post = get_object_or_404(
         Post.objects.select_related('author'), pk=post_id
     )
-    comments = Comment.objects.select_related('post').all()
-    form = CommentForm(request.POST or None)
+    comments = post.comments.all()
+    form = CommentForm()
     context = {
         'post': post,
         'form': form,

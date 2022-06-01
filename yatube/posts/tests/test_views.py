@@ -56,7 +56,7 @@ class PostViewsTest(TestCase):
             image=cls.uploaded,
         )
         cls.comment = Comment.objects.create(
-            author=cls.user,
+            author=cls.user_2,
             post=cls.post,
             text='Тестовый комментарий',
         )
@@ -197,10 +197,10 @@ class PostViewsTest(TestCase):
         response_3 = self.authorized_client.get(reverse('posts:index'))
         self.assertNotEqual(response_1.content, response_3.content)
 
-    def test_follow_create_and_delete(self):
+    def test_follow_create(self):
         """
         Авторизованный пользователь может подписываться
-        на других пользователей и удалять их из подписок
+        на других пользователей
         """
         count = Follow.objects.count()
         self.authorized_client_2.get(
@@ -208,40 +208,83 @@ class PostViewsTest(TestCase):
                 'username': self.user.username})
         )
         count_follow = Follow.objects.count()
+        self.assertEqual(count, count_follow - 1)
+
+    def test_follow_delete(self):
+        """
+        Авторизованный пользователь может отписываться
+        на других пользователей
+        """
+        count = Follow.objects.count()
+        self.authorized_client_2.get(
+            reverse('posts:profile_follow', kwargs={
+                'username': self.user.username})
+        )
         self.authorized_client_2.get(
             reverse('posts:profile_unfollow', kwargs={
                 'username': self.user.username})
         )
         count_unfollow = Follow.objects.count()
-        self.assertEqual(count, count_follow - 1)
         self.assertEqual(count, count_unfollow)
 
-    def test_in_follow_index_new_posts_authors(self):
+    def test_in_follow_index_new_posts_in_follower_index(self):
         """
         Новая запись пользователя появляется в ленте тех,
-        кто на него подписан и не появляется в ленте тех,
-        кто не подписан
+        кто на него подписан
         """
         Follow.objects.create(
             author=self.user,
             user=self.user_2,
         )
         response = self.authorized_client_2.get(reverse('posts:follow_index'))
-        count_index_1 = len(response.context['page_obj'])
+        count_index = len(response.context['page_obj'])
         self.post = Post.objects.create(
             author=self.user,
             text='Тестовый пост для follow',
         )
         response = self.authorized_client_2.get(reverse('posts:follow_index'))
         count_index_2 = len(response.context['page_obj'])
-        self.assertEqual(count_index_1, count_index_2 - 1)
+        self.assertEqual(count_index, count_index_2 - 1)
+
+    def test_in_follow_index_new_posts_in_not_follower_index(self):
+        """
+        Новая запись автора не появляется в ленте тех,
+        кто на него не подписан
+        """
+        Follow.objects.create(
+            author=self.user,
+            user=self.user_2,
+        )
+        response = self.authorized_client_2.get(reverse('posts:follow_index'))
+        count_index = len(response.context['page_obj'])
         self.post = Post.objects.create(
             author=self.user_3,
             text='Тестовый пост 2 для follow',
         )
         response = self.authorized_client_2.get(reverse('posts:follow_index'))
-        count_index_3 = len(response.context['page_obj'])
-        self.assertEqual(count_index_2, count_index_3)
+        count_index_2 = len(response.context['page_obj'])
+        self.assertEqual(count_index, count_index_2)
+
+    def test_authorized_client_add_comмent(self):
+        """
+        Авторизованный поьзователь может оставлять комметарии
+        """
+        response = self.authorized_client_2.get(
+            reverse('posts:post_detail', kwargs={
+                'post_id': self.post.id})
+        )
+        count = len(response.context['comments'])
+        Comment.objects.create(
+            author=self.user_2,
+            post=self.post,
+            text='Тестовый комментарий 2',
+        )
+        response = self.authorized_client_2.get(
+            reverse('posts:post_detail', kwargs={
+                'post_id': self.post.id})
+        )
+        count_2 = len(response.context['comments'])
+        self.assertEqual(count, count_2 - 1)
 
 
 class PostViewsPaginatorTest(TestCase):

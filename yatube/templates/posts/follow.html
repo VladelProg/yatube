@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 {% block title %} Избранные авторы {% endblock %}
 {% block content %}
-  {% include 'posts/includes/switcher.html' %}
+  {% include 'posts/includes/switcher.html' with follow=True %}
   <div class="container py-5">     
     <h1> Избранные авторы </h1>
-    <article>
-        {% for post in page_obj %}
-        {% include 'posts/includes/author_date.html' with show_group_link=True %}
-        {% endfor %}
-        {% include 'posts/includes/paginator.html' %}
-    <article>
+      {% for post in page_obj %}
+      {% include 'posts/includes/author_date.html' with show_group_link=True %}
+      {% endfor %}
+      {% include 'posts/includes/paginator.html' %}
   </div>
 {% endblock %}

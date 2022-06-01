@@ -101,3 +101,11 @@ class PostUrlsTest(TestCase):
             with self.subTest(address=address):
                 response = self.authorized_client.get(address)
                 self.assertTemplateUsed(response, template)
+
+    def test_guest_client_not_add_comment(self):
+        """
+        Анонимный пользователь не может оставлять комментарии
+        под постом
+        """
+        response = self.guest_client.get(f'/posts/{self.post.id}/comment/')
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
