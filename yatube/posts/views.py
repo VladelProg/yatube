@@ -78,12 +78,11 @@ def profile_unfollow(request, username):
         author=follow_author,
         user=request.user,
     )
-    if request.user != follow_author:
-        if Follow.objects.filter(
-            author=follow_author,
-            user=request.user,
-        ).exists():
-            follow.delete()
+    if Follow.objects.filter(
+        author=follow_author,
+        user=request.user,
+    ).exists():
+        follow.delete()
     return redirect('posts:follow_index')
 
 

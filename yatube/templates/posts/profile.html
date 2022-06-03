@@ -23,7 +23,7 @@
       {% endif %}
     </div>
     {% for post in page_obj %}
-    {% include 'posts/includes/author_date.html' with show_profile_link=True %}
+      {% include 'posts/includes/post_card.html' with show_profile_link=True %}
     {% endfor %}
     {% include 'posts/includes/paginator.html' %}
   </div>

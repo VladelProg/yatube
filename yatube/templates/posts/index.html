@@ -5,13 +5,11 @@
   {% include 'posts/includes/switcher.html' with index=True %}
   <div class="container py-5">     
     <h1> Последние обновления на сайте </h1>
-    <article>
-      {% cache 20 index_page with 'page_obj' %}
-        {% for post in page_obj %}
-        {% include 'posts/includes/author_date.html' with show_group_link=True %}
-        {% endfor %}
-        {% include 'posts/includes/paginator.html' %}
-      {% endcache %} 
-    <article>
+    {% cache 20 index_page with 'page_obj' %}
+      {% for post in page_obj %}
+        {% include 'posts/includes/post_card.html' with show_group_link=True %}
+      {% endfor %}
+      {% include 'posts/includes/paginator.html' %}
+    {% endcache %} 
   </div>
 {% endblock %}

@@ -216,9 +216,9 @@ class PostViewsTest(TestCase):
         на других пользователей
         """
         count = Follow.objects.count()
-        self.authorized_client_2.get(
-            reverse('posts:profile_follow', kwargs={
-                'username': self.user.username})
+        Follow.objects.create(
+            author=self.user,
+            user=self.user_2,
         )
         self.authorized_client_2.get(
             reverse('posts:profile_unfollow', kwargs={
@@ -265,26 +265,31 @@ class PostViewsTest(TestCase):
         count_index_2 = len(response.context['page_obj'])
         self.assertEqual(count_index, count_index_2)
 
-    def test_authorized_client_add_comмent(self):
+    def test_authorized_client_add_comment(self):
         """
-        Авторизованный поьзователь может оставлять комметарии
+        Авторизованный пользователь может оставлять комметарии
         """
-        response = self.authorized_client_2.get(
-            reverse('posts:post_detail', kwargs={
-                'post_id': self.post.id})
+        count = Comment.objects.count()
+        form_data = {'text': 'Тестовый комент'}
+        self.authorized_client_2.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
+            data=form_data,
+            follow=True
         )
-        count = len(response.context['comments'])
-        Comment.objects.create(
-            author=self.user_2,
-            post=self.post,
-            text='Тестовый комментарий 2',
+        self.assertEqual(Comment.objects.count(), count + 1)
+
+    def test_guest_client_not_add_comment(self):
+        """
+        Не авторизованный пользователь не может оставлять комметарии
+        """
+        count = Comment.objects.count()
+        form_data = {'text': 'Тестовый комент'}
+        self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
+            data=form_data,
+            follow=True
         )
-        response = self.authorized_client_2.get(
-            reverse('posts:post_detail', kwargs={
-                'post_id': self.post.id})
-        )
-        count_2 = len(response.context['comments'])
-        self.assertEqual(count, count_2 - 1)
+        self.assertEqual(Comment.objects.count(), count)
 
 
 class PostViewsPaginatorTest(TestCase):
