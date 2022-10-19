@@ -8,6 +8,7 @@ from ..models import Group, Post, User
 class PostUrlsTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        """Временные файлы необходимые для тестов."""
         super().setUpClass()
         cls.user = User.objects.create_user(username='auth')
         cls.user_2 = User.objects.create_user(username='not_author')
@@ -24,6 +25,7 @@ class PostUrlsTest(TestCase):
         )
 
     def setUp(self):
+        """Пользователи для тестирования."""
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -31,7 +33,7 @@ class PostUrlsTest(TestCase):
         self.authorized_client_2.force_login(self.user_2)
 
     def test_urls_uses_correct_template(self):
-        """Доступ любого пользователя к страницам приложения"""
+        """Доступ любого пользователя к страницам приложения."""
         templates_url_names = {
             'posts/index.html': '/',
             'posts/group_list.html': f'/group/{self.group.slug}/',
@@ -68,7 +70,7 @@ class PostUrlsTest(TestCase):
 
     def test_post_edit_url_redirect_guest_client(self):
         """Страница /posts/{self.post.id}/edit/
-        перенаправляет анонимного пользователя
+        перенаправляет анонимного пользователя.
         """
         response = self.guest_client.get(f'/posts/{self.post.id}/edit/')
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -105,7 +107,7 @@ class PostUrlsTest(TestCase):
     def test_guest_client_not_add_comment(self):
         """
         Анонимный пользователь не может оставлять комментарии
-        под постом
+        под постом.
         """
         response = self.guest_client.get(f'/posts/{self.post.id}/comment/')
         self.assertEqual(response.status_code, HTTPStatus.FOUND)

@@ -7,6 +7,7 @@ from ..models import Group, Post, User
 class PostViewsTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        """Временные файлы необходимые для тестов."""
         super().setUpClass()
         cls.user = User.objects.create_user(username='auth')
         cls.group = Group.objects.create(
@@ -27,11 +28,12 @@ class PostViewsTest(TestCase):
         }
 
     def setUp(self):
+        """Авторизация пользователя."""
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
     def test_valid_vorm_create_post(self):
-        """Валидная форма создает запись в Post"""
+        """Валидная форма создает запись в Post."""
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Тестовый текст',
@@ -50,7 +52,7 @@ class PostViewsTest(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
 
     def test_valid_vorm_post_edit(self):
-        """Валидная форма редактирует запись в Post"""
+        """Валидная форма редактирует запись в Post."""
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Тестовый текст',

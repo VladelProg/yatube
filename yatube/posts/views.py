@@ -72,7 +72,7 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    """отписаться от автора"""
+    """Отписаться от автора"""
     follow_author = get_object_or_404(User, username=username)
     follow = Follow.objects.get(
         author=follow_author,
@@ -134,6 +134,7 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
+    """Cоздание коммента"""
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():

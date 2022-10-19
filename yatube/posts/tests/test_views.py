@@ -23,6 +23,7 @@ class PostViewsTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Временные файлы необходимые для тестов."""
         super().setUpClass()
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x01\x00'
@@ -67,6 +68,7 @@ class PostViewsTest(TestCase):
         }
 
     def setUp(self):
+        """Пользователи для тестирования."""
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -183,7 +185,7 @@ class PostViewsTest(TestCase):
                 )
 
     def test_index_cache(self):
-        """Проверяем что механизм кеширования главной страницы
+        """Проверяем, что механизм кеширования главной страницы
         """
         response_1 = self.authorized_client.get(reverse('posts:index'))
         Post.objects.create(
@@ -295,6 +297,7 @@ class PostViewsTest(TestCase):
 class PostViewsPaginatorTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        """Временные файлы необходимые для тестов."""
         super().setUpClass()
         cls.user = User.objects.create_user(username='auth')
         cls.group = Group.objects.create(
@@ -314,6 +317,7 @@ class PostViewsPaginatorTest(TestCase):
                 group=cls.post.group,) for _ in range(PAGE_NUM)])
 
     def setUp(self):
+        """Пользователи для тестирования."""
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -338,7 +342,7 @@ class PostViewsPaginatorTest(TestCase):
     def test_second_page_contains_tree_records(self):
         """Тестируем сразу 3 страницы
         (index, group_list, profile)
-        пагинатора на 2-ой странице
+        пагинатора на 2-ой странице.
         """
         paginator_pages = {
             reverse('posts:index'): 'page_obj',
